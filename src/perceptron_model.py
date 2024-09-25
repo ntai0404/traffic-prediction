@@ -3,7 +3,7 @@ import pickle
 from sklearn.linear_model import Perceptron
 from sklearn.model_selection import train_test_split, cross_val_score, GridSearchCV
 from sklearn.preprocessing import StandardScaler
-from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
+from sklearn.metrics import accuracy_score, classification_report
 import matplotlib.pyplot as plt
 import seaborn as sns
 
@@ -11,15 +11,15 @@ import seaborn as sns
 df = pd.read_csv('./data/traffic_data.csv')
 
 # Features and target
-X = df.drop('traffic_condition', axis=1)
-y = df['traffic_condition']
+X = df.drop('traffic_condition', axis=1)  # Các đặc trưng
+y = df['traffic_condition']  # Nhãn mục tiêu
 
 # Check unique classes
 print(f"Unique traffic conditions: {y.unique()}")
 
-# Split the dataset
-X_temp, X_test, y_temp, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-X_train, X_val, y_train, y_val = train_test_split(X_temp, y_temp, test_size=0.25, random_state=42)
+# Split the dataset into train, validation, and test sets
+X_temp, X_test, y_temp, y_test = train_test_split(X, y, test_size=0.2, random_state=42)  # 40% train + validation, 20% test
+X_train, X_val, y_train, y_val = train_test_split(X_temp, y_temp, test_size=0.25, random_state=42)  # 20% train, 20% validation
 
 # Standardize the features
 scaler = StandardScaler()
@@ -61,15 +61,15 @@ cv_scores = cross_val_score(model, X_train, y_train, cv=5)
 with open('./src/perceptron.txt', 'w') as report_file:
     report_file.write("Training:\n")
     report_file.write(train_report)
-    report_file.write(f"\naccuracy                           {train_accuracy:.2f}       {len(y_train)}\n")
+    report_file.write(f"\nAccuracy: {train_accuracy:.2f}       {len(y_train)}\n")
     
     report_file.write("Validation:\n")
     report_file.write(val_report)
-    report_file.write(f"\naccuracy                           {val_accuracy:.2f}       {len(y_val)}\n")
+    report_file.write(f"\nAccuracy: {val_accuracy:.2f}       {len(y_val)}\n")
     
     report_file.write("Testing:\n")
     report_file.write(test_report)
-    report_file.write(f"\naccuracy                           {test_accuracy:.2f}       {len(y_test)}\n")
+    report_file.write(f"\nAccuracy: {test_accuracy:.2f}       {len(y_test)}\n")
     
     report_file.write(f"\nCross-validation scores (5-fold): {cv_scores}\n")
     report_file.write(f"Mean CV accuracy: {cv_scores.mean():.2f}\n")
@@ -85,6 +85,8 @@ with open('./src/perceptron_model.pkl', 'wb') as file:
     pickle.dump(model, file)
 
 print("Perceptron model saved successfully!")
+
+
 
 
 

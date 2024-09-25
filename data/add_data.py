@@ -1,44 +1,43 @@
-import random
 import pandas as pd
+import numpy as np
 
-# Giả lập dữ liệu cho 1000 mẫu loại 1 (Thông thoáng)
-data_type1 = {
-    'is_holiday': [random.choice([0, 1]) for _ in range(1000)],
-    'air_pollution_index': [round(random.uniform(20, 80), 2) for _ in range(1000)],  # Chỉ số ô nhiễm không khí
-    'temperature': [round(random.uniform(20, 30), 2) for _ in range(1000)],  # Nhiệt độ
-    'rain_p_h': [round(random.uniform(0, 2), 2) for _ in range(1000)],  # Mưa
-    'visibility_in_miles': [round(random.uniform(5, 10), 2) for _ in range(1000)],  # Tầm nhìn
-    'traffic_condition': [0] * 1000  # Phân loại là 1 (Thông thoáng)
-}
+def create_traffic_data(n_samples, traffic_condition):
+    data = []
+    for _ in n_samples:
+        is_holiday = np.random.choice([0, 1])
+        air_pollution_index = round(np.random.uniform(0, 100), 1)
+        temperature = round(np.random.uniform(15, 35), 1)
+        rain_p_h = round(np.random.uniform(0, 10), 1)
+        visibility_in_miles = round(np.random.uniform(0, 15), 1)
+        
+        if traffic_condition == 0:
+            time_of_day = np.random.choice([0, 1])
+        elif traffic_condition == 1:
+            time_of_day = np.random.choice([1, 2])
+        elif traffic_condition == 2:
+            time_of_day = np.random.choice([2, 3])
 
-# Tạo DataFrame cho loại 1
-df_type1 = pd.DataFrame(data_type1)
-df_type1.to_csv('./data/traffic_data.csv', index=False)
+        if traffic_condition == 0:
+            air_pollution_index = round(air_pollution_index * 0.5, 1)
+            visibility_in_miles = max(5, round(visibility_in_miles, 1))
+        elif traffic_condition == 1:
+            air_pollution_index = round(air_pollution_index * 1.5, 1)
+            visibility_in_miles = max(3, round(visibility_in_miles, 1))
+        elif traffic_condition == 2:
+            air_pollution_index = round(air_pollution_index * 2, 1)
+            visibility_in_miles = max(1, round(visibility_in_miles, 1))
+        
+        data.append([is_holiday, air_pollution_index, temperature, rain_p_h, visibility_in_miles, time_of_day, traffic_condition])
+    
+    return data
 
-# Giả lập dữ liệu cho 1000 mẫu loại 2 (Đông đúc)
-data_type2 = {
-    'is_holiday': [random.choice([0, 1]) for _ in range(1000)],
-    'air_pollution_index': [round(random.uniform(10, 50), 2) for _ in range(1000)],  # Chỉ số ô nhiễm không khí
-    'temperature': [round(random.uniform(20, 25), 2) for _ in range(1000)],  # Nhiệt độ
-    'rain_p_h': [round(random.uniform(0, 0.5), 2) for _ in range(1000)],  # Mưa
-    'visibility_in_miles': [round(random.uniform(5, 10), 2) for _ in range(1000)],  # Tầm nhìn
-    'traffic_condition': [1] * 1000  # Phân loại là 2 (Đông đúc)
-}
+samples_per_class = 400
+data_class_0 = create_traffic_data(400, 0)
+data_class_1 = create_traffic_data(300, 1)
+data_class_2 = create_traffic_data(350, 2)
 
-# Tạo DataFrame cho loại 2
-df_type2 = pd.DataFrame(data_type2)
-df_type2.to_csv('./data/traffic_data.csv', index=False)
+all_data = data_class_0 + data_class_1 + data_class_2
+df = pd.DataFrame(all_data, columns=['is_holiday', 'air_pollution_index', 'temperature', 'rain_p_h', 'visibility_in_miles', 'time_of_day', 'traffic_condition'])
 
-# Giả lập dữ liệu cho 1000 mẫu loại 3 (Ùn tắc)
-data_type3 = {
-    'is_holiday': [random.choice([0, 1]) for _ in range(1000)],
-    'air_pollution_index': [round(random.uniform(30, 80), 2) for _ in range(1000)],  # Chỉ số ô nhiễm không khí
-    'temperature': [round(random.uniform(25, 35), 2) for _ in range(1000)],  # Nhiệt độ
-    'rain_p_h': [round(random.uniform(0.5, 2.0), 2) for _ in range(1000)],  # Mưa
-    'visibility_in_miles': [round(random.uniform(2, 5), 2) for _ in range(1000)],  # Tầm nhìn
-    'traffic_condition': [2] * 1000  # Phân loại là 3 (Ùn tắc)
-}
-
-# Tạo DataFrame cho loại 3
-df_type3 = pd.DataFrame(data_type3)
-df_type3.to_csv('./data/traffic_data.csv', index=False)
+df.to_csv('./data/traffic_data.csv', index=False)
+print("Dữ liệu đã được tạo và lưu vào traffic_data.csv!")

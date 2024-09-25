@@ -1,22 +1,38 @@
 import pandas as pd
 import pickle
-from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split
+from sklearn.ensemble import StackingClassifier
 from sklearn.metrics import accuracy_score, classification_report
+from sklearn.linear_model import LogisticRegression
+from sklearn.neural_network import MLPClassifier
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.linear_model import Perceptron
 
 # Load dataset
 df = pd.read_csv('./data/traffic_data.csv')
 
-# Features and target (only keep the 5 important features)
-X = df[['is_holiday', 'air_pollution_index', 'temperature', 'rain_p_h', 'visibility_in_miles']]
+# Features and target
+X = df[['is_holiday', 'air_pollution_index', 'temperature', 'rain_p_h', 'visibility_in_miles', 'time_of_day']]
 y = df['traffic_condition']
 
 # Split the dataset into train, validation, and test sets
-X_temp, X_test, y_temp, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-X_train, X_val, y_train, y_val = train_test_split(X_temp, y_temp, test_size=0.25, random_state=42)  # 0.25 x 0.8 = 0.2
+X_temp, X_test, y_temp, y_test =train_test_split(X, y, test_size=0.2, random_state=42)
+X_train, X_val, y_train, y_val = train_test_split(X_temp, y_temp, test_size=0.25, random_state=42)
 
-# Create and train the ensemble model
-model = RandomForestClassifier(n_estimators=100, random_state=42)  # Set random_state for reproducibility
+# Define base models
+base_models = [
+    ('perceptron', Perceptron(max_iter=1000, random_state=42)),
+    ('decision_tree', DecisionTreeClassifier(random_state=42)),
+    ('neural_network', MLPClassifier(random_state=42, max_iter=1000))
+]
+
+
+meta_model = LogisticRegression()
+
+
+model = StackingClassifier(estimators=base_models, final_estimator=meta_model)
+
+
 model.fit(X_train, y_train)
 
 # Predict and evaluate
@@ -38,20 +54,20 @@ test_accuracy = accuracy_score(y_test, y_test_pred)
 with open('./src/ensemble.txt', 'w') as report_file:
     report_file.write("Training:\n")
     report_file.write(train_report)
-    report_file.write(f"\naccuracy                           {train_accuracy:.2f}       {len(y_train)}\n")
+    report_file.write(f"\nAccuracy: {train_accuracy:.2f}       {len(y_train)}\n")
     
     report_file.write("Validation:\n")
     report_file.write(val_report)
-    report_file.write(f"\naccuracy                           {val_accuracy:.2f}       {len(y_val)}\n")
+    report_file.write(f"\nAccuracy: {val_accuracy:.2f}       {len(y_val)}\n")
     
     report_file.write("Testing:\n")
     report_file.write(test_report)
-    report_file.write(f"\naccuracy                           {test_accuracy:.2f}       {len(y_test)}\n")
+    report_file.write(f"\nAccuracy: {test_accuracy:.2f}       {len(y_test)}\n")
 
 # Print accuracy for all three datasets
-print(f'Ensemble Model (Random Forest) Training Accuracy: {train_accuracy:.2f}')
-print(f'Ensemble Model (Random Forest) Validation Accuracy: {val_accuracy:.2f}')
-print(f'Ensemble Model (Random Forest) Testing Accuracy: {test_accuracy:.2f}')
+print(f'Ensemble Model Training Accuracy: {train_accuracy:.2f}')
+print(f'Ensemble Model Validation Accuracy: {val_accuracy:.2f}')
+print(f'Ensemble Model Testing Accuracy: {test_accuracy:.2f}')
 
 # Save the model
 try:
@@ -60,6 +76,9 @@ try:
     print("Ensemble model saved successfully!")
 except Exception as e:
     print(f"Error saving model: {e}")
+
+
+
 
 
 

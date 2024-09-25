@@ -10,7 +10,7 @@
 <body>
     <div class="web">
         <div class="header">
-            <h1>Traffic Prediction</h1>
+            <h1>Dự đoán giao thông</h1>
         </div>
         <div class="container">
             <form method="POST" action="/predict">
@@ -42,6 +42,10 @@
                 <input type="text" id="visibility_in_miles" name="visibility_in_miles" value="{{ request.form.get('visibility_in_miles') }}" required 
                     placeholder="Nhập tầm nhìn theo dặm (vd: 5)"><br>
                 
+                <label for="time_of_day">Thời gian trong ngày (0-3):</label>
+                <input type="text" id="time_of_day" name="time_of_day" value="{{ request.form.get('time_of_day') }}" required 
+                    placeholder="Nhập khung giờ (vd: 1 cho 7-12 giờ)"><br>
+
                 <input type="submit" value="Dự đoán">
             </form>
      
@@ -61,34 +65,20 @@
           
             {% if selected_model %}
             <p>Tên mô hình: {{ selected_model }}</p>
-
             {% endif %}
             
-           {% if report %}
+            {% if report %}
                 <h2>Báo cáo mô hình:</h2>
                 <pre>{{ report }}</pre>
             {% endif %}
             {% endif %}
             {% if confusion_matrix_image %}
-    <h3>Confusion Matrix</h3>
-    <img src="{{ confusion_matrix_image }}" alt="Confusion Matrix">
-    <h3>Learning curve</h3>
-    <img src="{{ learning_curve_image }}" alt="Learning Curve">
-
-{% endif %}
-        
-
+                <h3>Ma trận nhầm lẫn</h3>
+                <img src="{{ confusion_matrix_image }}" alt="Ma trận nhầm lẫn">
+                <h3>Đường cong học tập</h3>
+                <img src="{{ learning_curve_image }}" alt="Đường cong học tập">
+            {% endif %}
         </div>
     </div>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-

@@ -8,13 +8,16 @@ from sklearn.preprocessing import StandardScaler
 # Load dataset
 df = pd.read_csv('./data/traffic_data.csv')
 
-# Features and target (only keep the 5 important features)
-X = df[['is_holiday', 'air_pollution_index', 'temperature', 'rain_p_h', 'visibility_in_miles']]
+# Ensure time_of_day is in the correct format (0-3)
+df['time_of_day'] = df['time_of_day'].astype(int)
+
+# Features and target (updated to include all relevant features)
+X = df[['is_holiday', 'air_pollution_index', 'temperature', 'rain_p_h', 'visibility_in_miles', 'time_of_day']]
 y = df['traffic_condition']
 
 # Split the dataset into train, validation, and test sets
-X_temp, X_test, y_temp, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-X_train, X_val, y_train, y_val = train_test_split(X_temp, y_temp, test_size=0.25, random_state=42)  # 0.25 x 0.8 = 0.2
+X_temp, X_test, y_temp, y_test = train_test_split(X, y, test_size=0.6, random_state=42)  # 60% test, 40% temp
+X_train, X_val, y_train, y_val = train_test_split(X_temp, y_temp, test_size=0.5, random_state=42)  # 20% train, 20% validation
 
 # Standardize the features
 scaler = StandardScaler()
@@ -56,15 +59,15 @@ test_accuracy = accuracy_score(y_test, y_test_pred)
 with open('./src/id3.txt', 'w') as report_file:
     report_file.write("Training:\n")
     report_file.write(train_report)
-    report_file.write(f"\naccuracy                           {train_accuracy:.2f}       {len(y_train)}\n")
+    report_file.write(f"\nAccuracy: {train_accuracy:.2f}       {len(y_train)}\n")
     
     report_file.write("Validation:\n")
     report_file.write(val_report)
-    report_file.write(f"\naccuracy                           {val_accuracy:.2f}       {len(y_val)}\n")
+    report_file.write(f"\nAccuracy: {val_accuracy:.2f}       {len(y_val)}\n")
     
     report_file.write("Testing:\n")
     report_file.write(test_report)
-    report_file.write(f"\naccuracy                           {test_accuracy:.2f}       {len(y_test)}\n")
+    report_file.write(f"\nAccuracy: {test_accuracy:.2f}       {len(y_test)}\n")
 
 # Print accuracy for all three datasets
 print(f'ID3 Training Accuracy: {train_accuracy:.2f}')
@@ -76,8 +79,3 @@ with open('./src/id3_model.pkl', 'wb') as file:
     pickle.dump(model, file)
 
 print("ID3 model saved successfully!")
-
-
-
-
-
