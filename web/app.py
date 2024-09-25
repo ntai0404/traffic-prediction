@@ -13,7 +13,6 @@ import os
 
 app = Flask(__name__, static_folder='D:/machine learning/traffic_prediction/web/static')
 
-# Load the models
 models = {
     'Perceptron': pickle.load(open('./src/perceptron_model.pkl', 'rb')),
     'ID3': pickle.load(open('./src/id3_model.pkl', 'rb')),
@@ -21,7 +20,6 @@ models = {
     'Ensemble Model': pickle.load(open('./src/ensemble_model.pkl', 'rb'))
 }
 
-# Function to read report from text file
 def read_report(model_name):
     try:
         if model_name.lower() == "ensemble model":
@@ -34,7 +32,6 @@ def read_report(model_name):
     except FileNotFoundError:
         return "Report not found."
 
-# Function to check if file exists and create only if not present
 def save_if_not_exists(filepath, create_function):
     if not os.path.exists(filepath):
         print(f"Creating {filepath}...")
@@ -42,11 +39,9 @@ def save_if_not_exists(filepath, create_function):
     else:
         print(f"File {filepath} already exists, skipping creation.")
 
-# Function to create confusion matrix
 def create_confusion_matrix(y_true, y_pred, model_name):
     image_path = f'D:/machine learning/traffic_prediction/web/static/{model_name}_confusion_matrix.png'
     
-    # Only create if not exists
     def create_cm_image():
         cm = confusion_matrix(y_true, y_pred, labels=[0, 1, 2])
         
@@ -75,11 +70,9 @@ def create_confusion_matrix(y_true, y_pred, model_name):
     
     save_if_not_exists(image_path, create_cm_image)
 
-# Function to create learning curve
 def create_learning_curve(model, X, y, model_name):
     image_path = f'D:/machine learning/traffic_prediction/web/static/{model_name}_learning_curve.png'
     
-    # Only create if not exists
     def create_lc_image():
         train_sizes, train_scores, test_scores = learning_curve(
             model, X, y, cv=5, n_jobs=-1, train_sizes=np.linspace(0.1, 1.0, 10)
@@ -109,28 +102,21 @@ def index():
 def predict():
     selected_model = request.form.get('model')
     
-    # Load data from CSV
     df = pd.read_csv('./data/traffic_data.csv')
     X = df[['is_holiday', 'air_pollution_index', 'temperature', 'rain_p_h', 'visibility_in_miles', 'time_of_day']]
     y = df['traffic_condition']
 
-    # Load the selected model
     model = models[selected_model]
     
-    # Predict using the whole dataset
     predictions = model.predict(X)
 
-    # Create confusion matrix (only if not exists)
     create_confusion_matrix(y, predictions, selected_model)
-    
-    # Create learning curve (only if not exists)
     create_learning_curve(model, X, y, selected_model)
 
-    # Read the report for the selected model
     report = read_report(selected_model)
     
     return render_template('index.html', 
-                           prediction=predictions[0],  # Example, modify as needed
+                           prediction=predictions[0],  
                            models=models.keys(), 
                            selected_model=selected_model, 
                            report=report,
@@ -139,4 +125,5 @@ def predict():
 
 if __name__ == '__main__':
     app.run(debug=True)
+
 

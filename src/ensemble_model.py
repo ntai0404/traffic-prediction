@@ -8,49 +8,38 @@ from sklearn.neural_network import MLPClassifier
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.linear_model import Perceptron
 
-# Load dataset
 df = pd.read_csv('./data/traffic_data.csv')
 
-# Features and target
 X = df[['is_holiday', 'air_pollution_index', 'temperature', 'rain_p_h', 'visibility_in_miles', 'time_of_day']]
 y = df['traffic_condition']
 
-# Split the dataset into train, validation, and test sets
-X_temp, X_test, y_temp, y_test =train_test_split(X, y, test_size=0.2, random_state=42)
+X_temp, X_test, y_temp, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 X_train, X_val, y_train, y_val = train_test_split(X_temp, y_temp, test_size=0.25, random_state=42)
 
-# Define base models
 base_models = [
     ('perceptron', Perceptron(max_iter=1000, random_state=42)),
     ('decision_tree', DecisionTreeClassifier(random_state=42)),
     ('neural_network', MLPClassifier(random_state=42, max_iter=1000))
 ]
 
-
 meta_model = LogisticRegression()
-
 
 model = StackingClassifier(estimators=base_models, final_estimator=meta_model)
 
-
 model.fit(X_train, y_train)
 
-# Predict and evaluate
 y_train_pred = model.predict(X_train)
 y_val_pred = model.predict(X_val)
 y_test_pred = model.predict(X_test)
 
-# Generate classification reports
 train_report = classification_report(y_train, y_train_pred, output_dict=False)
 val_report = classification_report(y_val, y_val_pred, output_dict=False)
 test_report = classification_report(y_test, y_test_pred, output_dict=False)
 
-# Calculate accuracy
 train_accuracy = accuracy_score(y_train, y_train_pred)
 val_accuracy = accuracy_score(y_val, y_val_pred)
 test_accuracy = accuracy_score(y_test, y_test_pred)
 
-# Save reports to a text file
 with open('./src/ensemble.txt', 'w') as report_file:
     report_file.write("Training:\n")
     report_file.write(train_report)
@@ -64,18 +53,17 @@ with open('./src/ensemble.txt', 'w') as report_file:
     report_file.write(test_report)
     report_file.write(f"\nAccuracy: {test_accuracy:.2f}       {len(y_test)}\n")
 
-# Print accuracy for all three datasets
 print(f'Ensemble Model Training Accuracy: {train_accuracy:.2f}')
 print(f'Ensemble Model Validation Accuracy: {val_accuracy:.2f}')
 print(f'Ensemble Model Testing Accuracy: {test_accuracy:.2f}')
 
-# Save the model
 try:
     with open('./src/ensemble_model.pkl', 'wb') as file:
         pickle.dump(model, file)
     print("Ensemble model saved successfully!")
 except Exception as e:
     print(f"Error saving model: {e}")
+
 
 
 
