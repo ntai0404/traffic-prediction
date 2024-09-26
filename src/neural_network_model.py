@@ -11,8 +11,8 @@ df['time_of_day'] = df['time_of_day'].astype(int)
 X = df[['is_holiday', 'air_pollution_index', 'temperature', 'rain_p_h', 'visibility_in_miles', 'time_of_day']]
 y = df['traffic_condition']
 
-X_temp, X_test, y_temp, y_test = train_test_split(X, y, test_size=0.6, random_state=42)
-X_train, X_val, y_train, y_val = train_test_split(X_temp, y_temp, test_size=0.5, random_state=42)
+X_train, X_temp, y_train, y_temp = train_test_split(X, y, test_size=0.6, random_state=42)
+X_val, X_test, y_val, y_test = train_test_split(X_temp, y_temp, test_size=0.5, random_state=42)
 
 scaler = StandardScaler()
 X_train = scaler.fit_transform(X_train)
@@ -67,6 +67,7 @@ with open('./src/neural_network_model.pkl', 'wb') as file:
     pickle.dump(model, file)
 
 print("Neural Network model saved successfully!")
+
 
 
 

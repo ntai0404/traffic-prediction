@@ -18,8 +18,8 @@ y = df['traffic_condition']
 print(f"Unique traffic conditions: {y.unique()}")
 
 
-X_temp, X_test, y_temp, y_test = train_test_split(X, y, test_size=0.2, random_state=42)  # 40% train + validation, 20% test
-X_train, X_val, y_train, y_val = train_test_split(X_temp, y_temp, test_size=0.25, random_state=42)  # 20% train, 20% validation
+X_train, X_temp, y_train, y_temp = train_test_split(X, y, test_size=0.6, random_state=42)  # 40% train, 60% temp
+X_val, X_test, y_val, y_test = train_test_split(X_temp, y_temp, test_size=0.5, random_state=42)  # 30% val, 30% test
 
 
 scaler = StandardScaler()
@@ -83,6 +83,7 @@ with open('./src/perceptron_model.pkl', 'wb') as file:
     pickle.dump(model, file)
 
 print("Perceptron model saved successfully!")
+
 
 
 

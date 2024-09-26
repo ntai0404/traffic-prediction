@@ -1,36 +1,36 @@
 Training:
               precision    recall  f1-score   support
 
-           0       1.00      1.00      1.00        69
-           1       1.00      1.00      1.00        52
-           2       1.00      1.00      1.00        89
+           0       0.88      1.00      0.93       143
+           1       1.00      0.43      0.60       113
+           2       0.79      1.00      0.88       164
 
-    accuracy                           1.00       210
-   macro avg       1.00      1.00      1.00       210
-weighted avg       1.00      1.00      1.00       210
+    accuracy                           0.85       420
+   macro avg       0.89      0.81      0.81       420
+weighted avg       0.88      0.85      0.83       420
 
-Accuracy: 1.00       210
+Accuracy: 0.85       420
 Validation:
               precision    recall  f1-score   support
 
-           0       0.87      0.78      0.82        74
-           1       0.52      0.57      0.55        61
-           2       0.78      0.79      0.78        75
+           0       0.91      1.00      0.95       119
+           1       0.98      0.55      0.71       100
+           2       0.74      0.99      0.85        96
 
-    accuracy                           0.72       210
-   macro avg       0.72      0.71      0.72       210
-weighted avg       0.73      0.72      0.73       210
+    accuracy                           0.85       315
+   macro avg       0.88      0.85      0.84       315
+weighted avg       0.88      0.85      0.84       315
 
-Accuracy: 0.72       210
+Accuracy: 0.85       315
 Testing:
               precision    recall  f1-score   support
 
-           0       0.95      0.89      0.92       257
-           1       0.71      0.71      0.71       187
-           2       0.79      0.86      0.82       186
+           0       0.97      1.00      0.98       138
+           1       1.00      0.52      0.68        87
+           2       0.71      1.00      0.83        90
 
-    accuracy                           0.83       630
-   macro avg       0.82      0.82      0.82       630
-weighted avg       0.83      0.83      0.83       630
+    accuracy                           0.87       315
+   macro avg       0.89      0.84      0.83       315
+weighted avg       0.90      0.87      0.86       315
 
-Accuracy: 0.83       630
+Accuracy: 0.87       315
