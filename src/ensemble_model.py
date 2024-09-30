@@ -16,8 +16,11 @@ df = pd.read_csv('./data/traffic_data.csv')
 X = df[['is_holiday', 'air_pollution_index', 'temperature', 'rain_p_h', 'visibility_in_miles', 'time_of_day']]
 y = df['traffic_condition']
 
-X_temp, X_test, y_temp, y_test = train_test_split(X, y, test_size=0.6, random_state=42)
-X_train, X_val, y_train, y_val = train_test_split(X_temp, y_temp, test_size=0.5, random_state=42)
+# Chia dữ liệu thành tập huấn luyện (75%) và tập kiểm tra (25%)
+X_train, X_temp, y_train, y_temp = train_test_split(X, y, test_size=0.25, random_state=42)
+
+# Chia tập còn lại thành tập xác thực (15%) và tập kiểm tra (15%)
+X_val, X_test, y_val, y_test = train_test_split(X_temp, y_temp, test_size=0.5, random_state=42)
 
 with open('./src/perceptron_model.pkl', 'rb') as file:
     perceptron_model = pickle.load(file)
